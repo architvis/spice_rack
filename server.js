@@ -8,7 +8,7 @@ app.use(express.static(__dirname + '/public'));
 
 var mobileCallsSimulation = require('./mobileCallsSimulation');
 
-app.use('/mobile', mobileCallsSimulation);
+app.use('/', mobileCallsSimulation);
 
 // treating as an enum, don't have two states with the same value 
 const rState = {
