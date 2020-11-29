@@ -22,6 +22,9 @@ export class Renderer {
         case "spicerack":
           this.drawSpiceRack(entity.x + entity.xrel, entity.y + entity.yrel);
           break;
+        case "display":
+          this.drawDisplay(entity.x, entity.y, entity.displayString, entity.displayValue);
+          break;
         case "spiceholder":
           if (entity.state == "none") {
             this.drawSpiceHolder(entity.x + entity.xrel, entity.y + entity.yrel);
@@ -34,6 +37,11 @@ export class Renderer {
         default:
         // code block
       }
+    }
+  }
+  tick(delta){
+    for (var i = 0; i < this.entities.length; i++) {
+      this.entities[i].tick(delta);
     }
   }
   drawSpiceHolder(x, y) {
@@ -69,5 +77,19 @@ export class Renderer {
     this.ctx.lineTo(x - arrow.width / 2, y + arrow.pos[1] + arrow.height / 2);
 
     this.ctx.fill();
+  }
+  drawDisplay(x, y, str, value) {
+    this.ctx.save();
+    this.ctx.beginPath();
+    let width = 200;
+    let height = 50;
+    this.ctx.rect(x, y, width, height);
+    this.ctx.fill();
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "20px Arial";
+    let display = str +": "+value;
+
+    this.ctx.fillText(display, (x+width/2)-(this.ctx.measureText(display).width/2), y+height/2+(this.ctx.measureText("A").width/2));  // using the width of "A" for height as a quick fix, since getting height is a challenge other wise
+    this.ctx.restore();
   }
 }

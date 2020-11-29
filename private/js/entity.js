@@ -8,10 +8,30 @@ export class Entity {
     this.xrel = 0;
     this.yrel = 0;
   }
+  tick(delta){
+  }
 
 }
 
-class SpiceHolder extends Entity {
+export class Display extends Entity{
+  constructor(x, y, state = "none", displayString, displayValue) {
+    super(x, y, "display");
+    this.state = state;
+    this.displayString = displayString;
+    this.displayValue = displayValue;
+    this.times = [0,0,0,0,0,0,0,0,0,0,0,0] // just to try not to get crazy numbers
+  }
+  tick(delta){
+    this.times.push(delta);
+    this.times.shift();
+
+    let total = 0;
+    this.times.forEach((i)=>{total+=i})
+    this.displayValue= Math.floor(total/this.times.length); //average
+  }
+}
+
+export class SpiceHolder extends Entity {
   constructor(x, y, state = "none", displayString) {
     super(x, y, "spiceholder");
     this.state = state;
@@ -90,7 +110,7 @@ export class SpiceRack extends Entity {
     }
   }
 
-  run() {  //runs logic
+  tick() {  //runs logic
     this.degree+=(this.degree <0) ? 360 :0;
     this.degree = this.degree %360;
     this.targetDegree+=(this.targetDegree <0) ? 360 :0;
@@ -112,5 +132,6 @@ export class SpiceRack extends Entity {
       this.direction = -1;
       this.runMoveTo(-1);
     }
+    this.updateChildren();
   }
 }
