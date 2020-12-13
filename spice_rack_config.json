@@ -1,0 +1,10 @@
+{
+  "idle": true,
+  "state": "",
+  "fullRotation": true,
+  "rotation": 0,
+  "stepDegrees": 1.8, 
+  "stepsPerMs": 50,
+  "steps": 0,
+  "direction": 0
+}

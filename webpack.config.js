@@ -2,7 +2,8 @@ var path = require('path');
 
 module.exports = {
   entry: {
-      spicerack_simulation: "./private/js/spicerack_simulation.js"
+      spicerack_simulation: "./private/js/spicerack_simulation.js",
+      spicerack_webgl_simulation: "./private/js/spicerack_webgl_simulation.js"
   },
   output: {
     path: path.resolve(__dirname, "./public/js/"),

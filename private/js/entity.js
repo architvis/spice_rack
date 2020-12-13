@@ -90,14 +90,14 @@ export class SpiceRack extends Entity {
     })
   }
 
-  moveTo(degrees) {
-    if (this.state == "idle") {
-      this.state = "moveto";
-      this.targetDegree = degrees;
-    } else {
-      console.log("can't move in progress");
-    }
-  }
+  // moveTo(degrees) {
+  //   if (this.state == "idle") {
+  //     this.state = "moveto";
+  //     this.targetDegree = degrees;
+  //   } else {
+  //     console.log("can't move in progress");
+  //   }
+  // }
 
   runMoveTo(direction) { // [-1,0,1] = [counterclockwise, finddirection, clockwise]
     if (this.targetDegree == this.degree) {
@@ -110,28 +110,33 @@ export class SpiceRack extends Entity {
     }
   }
 
+  // tick() {  //runs logic
+  //   this.degree+=(this.degree <0) ? 360 :0;
+  //   this.degree = this.degree %360;
+  //   this.targetDegree+=(this.targetDegree <0) ? 360 :0;
+  //   this.targetDegree = this.targetDegree %360;
+  //   if (this.state == "moveto") {
+  //     let distance;
+  //     if((this.degree < this.targetDegree)){
+  //       distance = this.targetDegree-this.degree;
+  //       this.direction =  distance< 180 ? 1 : -1;
+  //     }else{
+  //       distance =  this.degree-this.targetDegree;
+  //       this.direction =  distance> 180 ? 1 : -1;
+  //     }
+  //     this.state = (this.direction == 1) ? "movetoright" : "movetoleft";
+  //   } else if (this.state == "movetoright") {
+  //     this.direction = 1;
+  //     this.runMoveTo(1);
+  //   } else if (this.state == "movetoleft") {
+  //     this.direction = -1;
+  //     this.runMoveTo(-1);
+  //   }
+  //   this.updateChildren();
+  // }
+
   tick() {  //runs logic
-    this.degree+=(this.degree <0) ? 360 :0;
-    this.degree = this.degree %360;
-    this.targetDegree+=(this.targetDegree <0) ? 360 :0;
-    this.targetDegree = this.targetDegree %360;
-    if (this.state == "moveto") {
-      let distance;
-      if((this.degree < this.targetDegree)){
-        distance = this.targetDegree-this.degree;
-        this.direction =  distance< 180 ? 1 : -1;
-      }else{
-        distance =  this.degree-this.targetDegree;
-        this.direction =  distance> 180 ? 1 : -1;
-      }
-      this.state = (this.direction == 1) ? "movetoright" : "movetoleft";
-    } else if (this.state == "movetoright") {
-      this.direction = 1;
-      this.runMoveTo(1);
-    } else if (this.state == "movetoleft") {
-      this.direction = -1;
-      this.runMoveTo(-1);
-    }
+    // no logic besides updating children, will be updated externally when message is directed to it
     this.updateChildren();
   }
 }

@@ -1,14 +1,18 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+const port = 3000;
 
 app.set('view engine', 'pug')
 
 app.use(express.static(__dirname + '/public'));
 
-var mobileCallsSimulation = require('./mobileCallsSimulation');
+// var mobileCallsSimulation = require('./mobileCallsSimulation');
+var webgl_simulation = require('./webgl_simulation');
 
-app.use('/', mobileCallsSimulation);
+app.use('/', webgl_simulation(io)); // passing io to webgl_simulation
 
 // treating as an enum, don't have two states with the same value 
 const rState = {
@@ -28,6 +32,7 @@ app.get('/', (req, res) => {
   })
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+// app.listen(port, () => {
+//   console.log(`Example app listening at http://localhost:${port}`)
+// })
+server.listen(port);
