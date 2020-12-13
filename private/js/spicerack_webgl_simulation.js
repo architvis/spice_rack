@@ -11,6 +11,9 @@ window.socket.on('connection', (socket) => {
     console.log('user disconnected');
   });
 });
+window.socket.on('turnTable_rotation', (rotation) => {
+  console.log("Turn Table rotation: " + rotation);
+});
 
 //global variables
 window.spiceRack1;

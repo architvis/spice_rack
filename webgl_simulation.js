@@ -20,30 +20,31 @@ function getStepsPerMs(stepsPerSecond) {
 }
 
 
-function step(turnTable) {  // likely will be part of turnTable
+function step(turnTable, socket) {  // likely will be part of turnTable
   turnTable.rotation = turnTable.rotation + (turnTable.direction * turnTable.stepDegrees);
   turnTable.steps--;
 
   if (turnTable.steps > 0) {
     console.log(turnTable.rotation);
-    setTimeout(function () { step(turnTable) }, turnTable.stepsPerMs);
+    socket.emit('turnTable_rotation', turnTable.rotation);
+    setTimeout(function () { step(turnTable, socket) }, turnTable.stepsPerMs);
   } else {
     turnTable.idle = true;
   }
 }
 
-function simulateMotor(turnTable) {
+function simulateMotor(turnTable, socket) {
   var stepsPerSecond = 50;
   var ms = 1 / (stepsPerSecond * .001);
   turnTable.idle = false; // starting job
-  step(turnTable);
+  step(turnTable, socket);
 }
 
 function main(io) {
 
   setSteps(-100, spiceRack);
   console.log(spiceRack.steps)
-  simulateMotor(spiceRack);
+  simulateMotor(spiceRack, io);
 
   router.get('/', function (req, res) {
     res.render('web_gl_simulation.pug')
