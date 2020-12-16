@@ -57,9 +57,9 @@ export class SpiceRack extends Entity {
     let sin = Math.sin;
     let cos = Math.cos;
     for (let i = 0; i < n; i++) {
-      let a = ((i * (360 / n)) * Math.PI / 180)
-      let x = (0 * cos(a)) + (-sin(a) * (1));
-      let y = (0 * (sin(a))) + (cos(a) * (1));
+      let a = ((i * (360 / n)) * Math.PI / 180); // angle
+      let x = (0 * cos(a)) + (sin(a) * (1));
+      let y = (0 * -(sin(a))) + (cos(a) * (1));
       spice = new SpiceHolder(x, y,"none");
       this.spices.push(spice)
       renderer.addEntity(spice);
@@ -76,8 +76,8 @@ export class SpiceRack extends Entity {
       let a = (this.degree * Math.PI / 180);
       let sin = Math.sin;
       let cos = Math.cos;
-      i.xrel = (i.x * cos(a)) + (sin(a) * i.y);
-      i.yrel = (i.x * (-sin(a))) + (cos(a) * i.y);
+      i.xrel = (i.x * cos(a)) + (-sin(a) * i.y);
+      i.yrel = (i.x * (sin(a))) + (cos(a) * i.y);
 
       //scale position
       i.xrel = i.xrel * this.scale;
