@@ -3,6 +3,14 @@ var express = require('express')
 var router = express.Router()
 var spiceRack = require("./spice_rack_config");
 
+var inventory = [{uid: 0, name:"empty", contents: -1, rotation:0 },
+  {uid: 1, name:"pepper", contents: 3, rotation:51.42857142857143 },
+  {uid: 2, name:"salt", contents: 2, rotation:102.85714285714286 },
+  {uid: 3, name:"garlic", contents: 4, rotation:154.28571428571428 },
+  {uid: 4, name:"garlic salt", contents: 4, rotation:205.71428571428572 },
+  {uid: 5, name:"garlic", contents: 3, rotation:257.14285714285717 },
+  {uid: 6, name:"onion", contents: 2,rotation:308.57142857142856 }]
+
 // turn table controller class that  
 class TurnTable {
   constructor(rotation = 0, stepDegrees, stepsPerSecond, idle = true, state = "", fullRotation = true, socket) {
@@ -28,7 +36,7 @@ class TurnTable {
     this.idle = false;
     var dist = newRotation - this.rotation;
     if (Math.abs(dist) > 180) {
-      dist = (distClockwise > 0) ? dist - 360 : dist + 360;
+      dist = (dist > 0) ? dist - 360 : dist + 360;
     }
     this.direction = (dist > 0) ? 1 : -1;
     this.steps = Math.abs(Math.round(dist / this.stepDegrees));
@@ -52,7 +60,7 @@ function setSteps(newRotation, turnTable) { // function will be part of turnTabl
   turnTable.idle = false;
   var dist = newRotation - turnTable.rotation;
   if (Math.abs(dist) > 180) {
-    dist = (distClockwise > 0) ? dist - 360 : dist + 360;
+    dist = (dist > 0) ? dist - 180 : dist + 180;
   }
   turnTable.direction = (dist > 0) ? 1 : -1;
   turnTable.steps = Math.abs(Math.round(dist / turnTable.stepDegrees));
@@ -100,8 +108,8 @@ function main(io) {
 
   router.get('/movetopoint/:id', function (req, res) {
     console.log("get request to move to id: " + req.params.id);
-    var points = [{uid: 1, rotation:30},{uid: 2, rotation:60},{uid: 3, rotation:90},{uid: 4, rotation:120},{uid: 5, rotation:150}]
-    var foundPoint = points.find(x => x.uid == req.params.id);
+
+    var foundPoint = inventory.find(x => x.uid == req.params.id);
     console.log("point found: " + foundPoint.uid);
     if(foundPoint != null){
       table.setSteps(foundPoint.rotation);
@@ -113,7 +121,7 @@ function main(io) {
 
   io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.emit('turnTable_inventory', [{ degree: 0, contents: 4, name: "pepper", uid: 0 }]);
+    socket.emit('turnTable_inventory', inventory);
   });
 
   return router;

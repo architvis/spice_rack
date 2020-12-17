@@ -41,11 +41,11 @@ export class SpiceHolder extends Entity {
 }
 
 export class SpiceRack extends Entity {
-  constructor(x, y, scale, degree, n = 7, renderer) {
+  constructor(x, y, radiusDistance, degree, n = 7, renderer) {
     super(x, y, "spicerack");
 
     this.spices = [];
-    this.scale = scale;
+    this.radiusDistance = radiusDistance;
     this.position = [x, y];
     this.degree = degree;
     this.targetDegree = 0;
@@ -79,9 +79,9 @@ export class SpiceRack extends Entity {
       i.xrel = (i.x * cos(a)) + (-sin(a) * i.y);
       i.yrel = (i.x * (sin(a))) + (cos(a) * i.y);
 
-      //scale position
-      i.xrel = i.xrel * this.scale;
-      i.yrel = i.yrel * this.scale;
+      // set relative radius distance of children from parent
+      i.xrel = i.xrel * this.radiusDistance;
+      i.yrel = i.yrel * this.radiusDistance;
 
 
       //translate position

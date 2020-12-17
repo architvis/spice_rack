@@ -7,20 +7,26 @@ window.socket = io();
 window.inventory;
 
 
+// Socket HTTP requests communication
+
+function requestMoveToPoint(uid) {
+  $.get('/movetopoint/'+uid,  // url
+  function (data, textStatus, jqXHR) {  // success callback
+      console.log('status: ' + textStatus + ', data:' + data);
+});
+};
+
 // Updating spice rack functions below this point
 
 function generateUserInterface() {
   var ui = $("#moveto_ui");
+  ui.empty();
   window.inventory.forEach((item) => {
-    ui.append(' <button class="btn btn-secondary" onclick="requestMoveTo(' + item.uid + ')">' + item.name + '</button>');
+    var el = $(' <button id="'+ item.uid+'" class=" btn btn-secondary" >' + item.name + '</button>');
+    ui.append(el);
+    el.on("click",()=>{requestMoveToPoint(item.uid)});
   });
 }
-
-// Socket HTTP requests communication
-
-function requestMoveToPoint(uid) {
-
-};
 
 function setupSocketCommunication(turnTable) {
   window.socket.on('connection', (socket) => {
@@ -67,7 +73,6 @@ function main() {
   renderer.addEntity(display1);
   display1.displayString = "Display";
   display1.displayValue = "val";
-
   // add spices to spice racks
   spiceRack1.spices[0].state = "full";
   spiceRack1.spices[0].displayString = "0";
