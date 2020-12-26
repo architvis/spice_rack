@@ -32,16 +32,17 @@ export class Display extends Entity{
 }
 
 export class SpiceHolder extends Entity {
-  constructor(x, y, state = "none", displayString) {
+  constructor(x, y, state = "none", displayString, radiusDistance = 100) {
     super(x, y, "spiceholder");
     this.state = state;
     this.displayString = displayString;
+    this.radiusDistance = radiusDistance;
   }
 
 }
 
 export class SpiceRack extends Entity {
-  constructor(x, y, radiusDistance, degree, n = 7, renderer) {
+  constructor(x, y, radiusDistance,degree=0, children=[]) { // children are entities that attach to SpiceRack
     super(x, y, "spicerack");
 
     this.spices = [];
@@ -56,16 +57,58 @@ export class SpiceRack extends Entity {
     var spice;
     let sin = Math.sin;
     let cos = Math.cos;
-    for (let i = 0; i < n; i++) {
-      let a = ((i * (360 / n)) * Math.PI / 180); // angle
+    for (let i = 0; i < children.length; i++) {
+      let a = children[i].rotation; // angle
       let x = (0 * cos(a)) + (sin(a) * (1));
       let y = (0 * -(sin(a))) + (cos(a) * (1));
       spice = new SpiceHolder(x, y,"none");
-      this.spices.push(spice)
-      renderer.addEntity(spice);
+     this.spices.push(spice);
+     console.log("spice added")
     }
-
   }
+
+  replaceChildren(children=[]){
+    this.clearSpices();
+    this.addChildren(children);
+  }
+
+  addChildren(children=[]){
+    var spice;
+    let sin = Math.sin;
+    let cos = Math.cos;
+    for (let i = 0; i < children.length; i++) {
+      let a = children[i].rotation*Math.PI/180; // angle
+      let x = (sin(a) * (1));
+      let y = (cos(a) * (1));
+      var contents = "";
+
+      switch(children[i].contents) {
+        case -1:
+          contents = "none";
+          break;
+        case 1:
+          contents = "quarter";
+          break;
+        case 2:
+          contents = "half";
+          break;
+        case 3:
+          contents = "3 quarters";
+          break;
+        case 4:
+          contents = "full";
+          break;
+        default:
+          contents = "none";
+          break;
+      }
+
+      spice = new SpiceHolder(x, y,contents, children[i].name, children[i].radiusDistance);
+     this.spices.push(spice);
+     console.log("spice added")
+    }
+  }
+
   updateChildren() {
     this.spices.forEach((i) => {
       //zero relative position
@@ -80,8 +123,8 @@ export class SpiceRack extends Entity {
       i.yrel = (i.x * (sin(a))) + (cos(a) * i.y);
 
       // set relative radius distance of children from parent
-      i.xrel = i.xrel * this.radiusDistance;
-      i.yrel = i.yrel * this.radiusDistance;
+      i.xrel = i.xrel * i.radiusDistance;
+      i.yrel = i.yrel * i.radiusDistance;
 
 
       //translate position
@@ -90,14 +133,6 @@ export class SpiceRack extends Entity {
     })
   }
 
-  // moveTo(degrees) {
-  //   if (this.state == "idle") {
-  //     this.state = "moveto";
-  //     this.targetDegree = degrees;
-  //   } else {
-  //     console.log("can't move in progress");
-  //   }
-  // }
 
   runMoveTo(direction) { // [-1,0,1] = [counterclockwise, finddirection, clockwise]
     if (this.targetDegree == this.degree) {
@@ -110,30 +145,10 @@ export class SpiceRack extends Entity {
     }
   }
 
-  // tick() {  //runs logic
-  //   this.degree+=(this.degree <0) ? 360 :0;
-  //   this.degree = this.degree %360;
-  //   this.targetDegree+=(this.targetDegree <0) ? 360 :0;
-  //   this.targetDegree = this.targetDegree %360;
-  //   if (this.state == "moveto") {
-  //     let distance;
-  //     if((this.degree < this.targetDegree)){
-  //       distance = this.targetDegree-this.degree;
-  //       this.direction =  distance< 180 ? 1 : -1;
-  //     }else{
-  //       distance =  this.degree-this.targetDegree;
-  //       this.direction =  distance> 180 ? 1 : -1;
-  //     }
-  //     this.state = (this.direction == 1) ? "movetoright" : "movetoleft";
-  //   } else if (this.state == "movetoright") {
-  //     this.direction = 1;
-  //     this.runMoveTo(1);
-  //   } else if (this.state == "movetoleft") {
-  //     this.direction = -1;
-  //     this.runMoveTo(-1);
-  //   }
-  //   this.updateChildren();
-  // }
+  clearSpices(){
+    this.spices = [];
+  }
+
 
   tick() {  //runs logic
     // no logic besides updating children, will be updated externally when message is directed to it

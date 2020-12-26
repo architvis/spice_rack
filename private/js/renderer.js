@@ -13,31 +13,49 @@ export class Renderer {
   drawEntities() {
     var entity;
     for (var i = 0; i < this.entities.length; i++) {
-      entity = this.entities[i];
+      this.drawEntity( this.entities[i]);
+    }
+  }
+  drawEntity(entity) {
       switch (entity.type) {
         case "entity":
         case "inactive":
           // no rendering
           break;
-        case "spicerack":
-          this.drawSpiceRack(entity.x + entity.xrel, entity.y + entity.yrel);
-          break;
+          case "spicerack":
+            this.drawSpiceRack(entity.x + entity.xrel, entity.y + entity.yrel);
+            entity.spices.forEach((spice)=>{this.drawEntity(spice)})
+            break;
         case "display":
           this.drawDisplay(entity.x, entity.y, entity.displayString, entity.displayValue);
           break;
         case "spiceholder":
-          if (entity.state == "none") {
-            this.drawSpiceHolder(entity.x + entity.xrel, entity.y + entity.yrel);
-          } else if (entity.state == "full") {
-            this.drawSpice(entity.x + entity.xrel, entity.y + entity.yrel, entity.displayString);
-          }else if (entity.state == "half") {
-            this.drawSpice(entity.x + entity.xrel, entity.y + entity.yrel);
+          var colors = [];
+          switch(entity.state) { // colors are based on https://clrs.cc/ defaults
+            case "none":
+              colors = ["#DDDDDD","black"];
+              break;
+            case "quarter":
+              colors = ["#FFDC00","white"];
+              break;
+            case "half":
+              colors = ["#7FDBFF","white"];
+              break;
+            case "3 quarters":
+              colors = ["#0074D9","white"];
+              break;
+            case "full":
+              colors = ["#001f3f","white"];
+              break;
+            default:
+              colors = ["black","white"];
+              break;
           }
+          this.drawSpice(entity.x + entity.xrel, entity.y + entity.yrel, entity.displayString,colors[0],colors[1] );
           break;
         default:
         // code block
       }
-    }
   }
   tick(delta){
     for (var i = 0; i < this.entities.length; i++) {
@@ -50,12 +68,13 @@ export class Renderer {
     this.ctx.stroke();
   }
 
-  drawSpice(x, y, str="") {
+  drawSpice(x, y, str="", backgroundColor="black", textColor = "white") {
     this.ctx.save();
+    this.ctx.fillStyle = backgroundColor;
     this.ctx.beginPath();
     this.ctx.arc(x, y, 40, 0, 2 * Math.PI);
     this.ctx.fill();
-    this.ctx.fillStyle = "white";
+    this.ctx.fillStyle = textColor;
     this.ctx.font = "20px Arial";
     this.ctx.fillText(str, x-(this.ctx.measureText(str).width/2), y+this.ctx.measureText("A").width/2);  // using the width of "A" for height as a quick fix, since getting height is a challenge other wise
     this.ctx.restore();
@@ -69,6 +88,7 @@ export class Renderer {
     this.ctx.arc(x, y, 150, 0, 2 * Math.PI);
     this.ctx.stroke();
 
+    //draw the arrow that shows which spice is selected and where to pick up from
     let arrow = { pos: [0, 150], height: 30, width: 30 }
     this.ctx.beginPath();
     this.ctx.moveTo(x, y + arrow.pos[1] + arrow.height / 2);

@@ -3,17 +3,19 @@ var express = require('express')
 var router = express.Router()
 var spiceRack = require("./spice_rack_config");
 
-var inventory = [{uid: 0, name:"empty", contents: -1, rotation:0 },
-  {uid: 1, name:"pepper", contents: 3, rotation:51.42857142857143 },
-  {uid: 2, name:"salt", contents: 2, rotation:102.85714285714286 },
-  {uid: 3, name:"garlic", contents: 4, rotation:154.28571428571428 },
-  {uid: 4, name:"garlic salt", contents: 4, rotation:205.71428571428572 },
-  {uid: 5, name:"garlic", contents: 3, rotation:257.14285714285717 },
-  {uid: 6, name:"onion", contents: 2,rotation:308.57142857142856 }]
+var inventory = spiceRack.inventory;
+
+const rState = {
+  INACTIVE: "inactive",  // not communicating, can't take request until active
+  ACTIVE: "active",        // communicating and taking requests
+  ROTATING: "rotating",  // moving spice platform, cannot take certain requests
+  AWAITINGINPUT: "awaiting user input"  // when rack needs to wait for user input to say a task is complete, like "User removed and put back the spice" 
+} 
+
 
 // turn table controller class that  
 class TurnTable {
-  constructor(rotation = 0, stepDegrees, stepsPerSecond, idle = true, state = "", fullRotation = true, socket) {
+  constructor(rotation = 0, stepDegrees, stepsPerSecond, idle = true, state = rState.ACTIVE, fullRotation = true, socket) {
     this.rotation = rotation;
     this.stepDegrees = stepDegrees;
     this.stepsPerMs = this.getStepsPerMs(stepsPerSecond);
@@ -34,6 +36,8 @@ class TurnTable {
   }
   setSteps(newRotation){
     this.idle = false;
+    this.state = rState.ROTATING; 
+
     var dist = newRotation - this.rotation;
     if (Math.abs(dist) > 180) {
       dist = (dist > 0) ? dist - 360 : dist + 360;
@@ -46,51 +50,15 @@ class TurnTable {
     this.steps--;
   
     if (this.steps > 0) {
-      console.log(this.rotation);
       this.socket.emit('turnTable_rotation', this.rotation);
       setTimeout(() =>{ this.step() }, this.stepsPerMs);
     } else {
       this.idle = true;
+      this.state = rState.ACTIVE;
+      console.log("complete: using ms=> "+ this.stepsPerMs)
     }
   }
 
-}
-
-function setSteps(newRotation, turnTable) { // function will be part of turnTable class
-  turnTable.idle = false;
-  var dist = newRotation - turnTable.rotation;
-  if (Math.abs(dist) > 180) {
-    dist = (dist > 0) ? dist - 180 : dist + 180;
-  }
-  turnTable.direction = (dist > 0) ? 1 : -1;
-  turnTable.steps = Math.abs(Math.round(dist / turnTable.stepDegrees));
-}
-
-function getStepsPerMs(stepsPerSecond) {
-  var stepsPerSecond = 50;
-  var ms = 1 / (stepsPerSecond * .001);
-  return ms;
-}
-
-
-function step(turnTable, socket) {  // likely will be part of turnTable
-  turnTable.rotation = turnTable.rotation + (turnTable.direction * turnTable.stepDegrees);
-  turnTable.steps--;
-
-  if (turnTable.steps > 0) {
-    console.log(turnTable.rotation);
-    socket.emit('turnTable_rotation', turnTable.rotation);
-    setTimeout(function () { step(turnTable, socket) }, turnTable.stepsPerMs);
-  } else {
-    turnTable.idle = true;
-  }
-}
-
-function simulateMotor(turnTable, socket) {
-  var stepsPerSecond = 50;
-  var ms = 1 / (stepsPerSecond * .001);
-  turnTable.idle = false; // starting job
-  step(turnTable, socket);
 }
 
 function main(io) {
@@ -98,8 +66,7 @@ function main(io) {
   // setSteps(-100, spiceRack);
   // console.log(spiceRack.steps)
   // simulateMotor(spiceRack, io);
-  var table = new TurnTable(0, 1.8, 50, true, "", true, io);
-  table.setSteps(-100);
+  var table = new TurnTable(spiceRack.rotation, spiceRack.stepDegrees, spiceRack.stepsPerSecond, spiceRack.idle, spiceRack.state, true, io); //rotation = 0, stepDegrees, stepsPerSecond, idle = true, state = "", fullRotation = true
   table.step();
 
   router.get('/', function (req, res) {
@@ -107,15 +74,18 @@ function main(io) {
   })
 
   router.get('/movetopoint/:id', function (req, res) {
-    console.log("get request to move to id: " + req.params.id);
-
+    console.log("Get request to move to id: " + req.params.id);
     var foundPoint = inventory.find(x => x.uid == req.params.id);
-    console.log("point found: " + foundPoint.uid);
-    if(foundPoint != null){
+    if(foundPoint != null & table.idle == true){
+      console.log("point found: " + foundPoint.uid);
+      // the following should be inside the turn table class, likely in a beginStep function
       table.setSteps(foundPoint.rotation);
       table.step();
-  }
-    res.send(200)
+      res.send(200);
+    }else{
+      console.log("error in movetopoint, table may be idle or point not found.");
+      res.send(500); // generic server error code
+    }
   })
 
 
