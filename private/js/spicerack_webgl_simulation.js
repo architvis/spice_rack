@@ -16,6 +16,18 @@ function requestMoveToPoint(uid) {
     });
 };
 
+function requestSetName(id, name) {
+  $.post("setName", { name: name, id: id }, function (data) {
+
+  }, "json");
+}
+
+function requestSetContents(id, contents) {
+  $.post("setContents", { contents: contents, id: id }, function (data) {
+
+  }, "json");
+}
+
 // Updating spice rack functions below this point
 
 function generateUserInterface() {
@@ -27,16 +39,29 @@ function generateUserInterface() {
     // el.on("click",()=>{requestMoveToPoint(item.uid)});
     var row = $('<div class="row" style=" margin:20px 0px;"></div>')
 
-    var button = $(' <button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-6">Select</button>');
+    var button = $(' <button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-12">Select</button>');
     row.append(button);
+
+    var textBoxContainer = $(' <div class="col-lg-2 col-xl-2 col-6" style="margin:auto;"></div>')
+    var textBox = $('<input type="text" placeholder="New Spice" class=".form-control" style=" width:100%; height:100%;"></input>');
+    textBoxContainer.append(textBox);
+    row.append(textBoxContainer);
 
     var label = $(' <label class=" col-form-label col-form-label-md col-lg-2 col-xl-2 col-6" style="margin:auto;  text-align: center;">' + item.name + '</label>');
     row.append(label);
 
-    var textBoxContainer = $(' <div class="col-lg-4 col-xl-4 col-6" style="margin:auto;"></div>')
-    var textBox = $('<input type="text" placeholder="New Spice" class=".form-control" style=" width:100%; height:100%;"></input>');
-    textBoxContainer.append(textBox);
-    row.append(textBoxContainer);
+    var selectContainer = $('<div class="col-lg-2 col-xl-2 col-6"></div>');
+    var select = $(`<select class="custom-select mr-sm-2" >
+    <option selected value="null">Choose...</option>
+    <option value="-1">No spice</option>
+    <option value="0">Empty</option>
+    <option value="1">1/4 Full</option>
+    <option value="2">1/2 Full</option>
+    <option value="3">3/4 Full</option>
+    <option value="4">Full</option></select>`);
+    select.val(item.contents);
+    selectContainer.append(select);
+    row.append(selectContainer);
 
     var contents = parseInt(item.contents);
     var progressBarContainer = $('<div class="col-lg-4 col-xl-4 col-6" style="margin:10px 0px; height:30px;"></div>');
@@ -52,7 +77,16 @@ function generateUserInterface() {
 
     textBox.on('keypress', function (e) {
       if (e.which === 13) {
-        console.log("Change "+ item.uid+" spice name => "+textBox.val());
+        console.log("Change " + item.uid + " spice name => " + textBox.val());
+        requestSetName(item.uid, textBox.val());
+      }
+    });
+
+    select.on("change", () => { 
+      console.log("value changed :" + select.val()) 
+      
+      if(select.val() != "null"){ 
+        requestSetContents(item.uid, select.val());
       }
     });
 
@@ -62,7 +96,6 @@ function generateUserInterface() {
 function setupSocketCommunication(turnTable) {
   window.socket.on('connection', (socket) => {
     console.log('a user connected');
-
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
@@ -99,20 +132,12 @@ function main() {
 
   setupSocketCommunication(spiceRack1);
 
-  let spiceRack2 = new SpiceRack(700, 200, 100, 0);
-  window.spiceRack2 = spiceRack2; //make global so html can access
-  renderer.addEntity(spiceRack2);
-
-  let display1 = new Display(790, 0, "inactive", "Display", "Val");
-  window.display1 = display1; //make global so html can access
-  renderer.addEntity(display1);
-
   wrapper(renderer);
 
 }
 
 function wrapper(renderer) {
-  let model = { lastTime: window.performance.now(), spiceRack1: spiceRack1, spiceRack2: spiceRack2 };
+  let model = { lastTime: window.performance.now() };
   renderer;
   animate();
   function animate() {

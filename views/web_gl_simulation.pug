@@ -11,10 +11,6 @@
 <link rel="stylesheet" href="css/spiceRackSimulation.css" >
 
 .container
-  //- .btn-group(width="100%").d-flex.justify-content-center
-  //-   button(type="button").btn.btn-outline-primary Tests 1
-  //-   button(type="button").btn.btn-outline-secondary Tests 2
-  //-   button(type="button").btn.btn-outline-success Tests 3
   .card
     .card-header Spice Rack Simulation
   .card
@@ -36,7 +32,9 @@
           button(type="button" onclick="spiceRack2.moveTo(Math.floor(4 * (360 / 7)))").btn.btn-secondary Move to 4 position, i=4, n=7
           button(type="button" onclick="spiceRack2.moveTo(Math.floor(5 * (360 / 7)))").btn.btn-secondary Move to 5 position, i=5, n=7
           button(type="button" onclick="spiceRack2.moveTo(Math.floor(6 * (360 / 7)))").btn.btn-secondary Move to 6 position, i=6, n=7
-
   .card
     #deltatime
-    canvas#web_gl_simulation(width="1000px", height="500px")
+    .row
+      .col-lg-3.col.col-xg-3.col-xs-0.col-sm-0
+      .col-lg-6.col-xg-6.col-xs-12.col-sm-12
+        canvas#web_gl_simulation(width="500px", height="500px")

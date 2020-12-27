@@ -35,6 +35,7 @@ class TurnTable {
     return ms;
   }
   setSteps(newRotation){
+    this.rotation = (this.rotation%360);
     this.idle = false;
     this.state = rState.ROTATING; 
 
@@ -44,6 +45,10 @@ class TurnTable {
     }
     this.direction = (dist > 0) ? 1 : -1;
     this.steps = Math.abs(Math.round(dist / this.stepDegrees));
+
+    var i = 1000;
+    var j = .001;
+    console.log("Old rotation: :"+ j*(Math.floor(this.rotation*i)))
   }
   step(){
     this.rotation = this.rotation + (this.direction * this.stepDegrees);
@@ -55,6 +60,10 @@ class TurnTable {
     } else {
       this.idle = true;
       this.state = rState.ACTIVE;
+
+      var i = 1000;
+      var j = .001;
+      console.log("New rotation: :"+ j*(Math.floor(this.rotation*i)))
       console.log("complete: using ms=> "+ this.stepsPerMs)
     }
   }
@@ -88,6 +97,33 @@ function main(io) {
     }
   })
 
+  router.post('/setName', (req, res) =>{
+    console.log("Post setName id: " + req.body.id);
+    var foundPoint = inventory.find(x => x.uid == req.body.id);
+    if(foundPoint != null & table.idle == true){
+      console.log("point found: " + foundPoint.uid);
+      foundPoint.name = req.body.name; 
+      io.emit('turnTable_inventory', inventory);
+      res.send(200);
+    }else{
+      console.log("Point not found");
+      res.send(500); // generic server error code
+    }
+  })
+
+  router.post('/setContents', (req, res) =>{
+    console.log("Post setName id: " + req.body.id);
+    var foundPoint = inventory.find(x => x.uid == req.body.id);
+    if(foundPoint != null & table.idle == true){
+      console.log("point found: " + foundPoint.uid);
+      foundPoint.contents = req.body.contents; 
+      io.emit('turnTable_inventory', inventory);
+      res.send(200);
+    }else{
+      console.log("Point not found");
+      res.send(500); // generic server error code
+    }
+  })
 
   io.on('connection', (socket) => {
     console.log('a user connected');
