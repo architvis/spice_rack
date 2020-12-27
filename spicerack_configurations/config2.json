@@ -1,0 +1,30 @@
+{
+  "idle": true,
+  "ms1_pin": 1,
+  "ms2_pin": 1,
+  "ms3_pin": 1,
+  "microsteppingMode" : 0,
+  "state": "",
+  "fullRotation": true,
+  "rotation": 0,
+  "stepDegrees": 0.45, 
+  "stepsPerSecond": 1000,
+  "steps": 0,
+  "direction": 0,
+  "inventory": [
+    {"uid": 0, "name":"", "contents": "-1", "rotation": 0, "radiusDistance": 100},
+    {"uid": 1, "name":"", "contents": "-1", "rotation": 51.42857142857143, "radiusDistance": 100},
+    {"uid": 2, "name":"", "contents": "-1", "rotation": 102.85714285714286, "radiusDistance": 100},
+    {"uid": 3, "name":"", "contents": "-1", "rotation": 154.28571428571428, "radiusDistance": 100},
+    {"uid": 4, "name":"", "contents": "-1", "rotation": 205.71428571428572, "radiusDistance": 100},
+    {"uid": 5, "name":"", "contents": "-1", "rotation": 257.14285714285717, "radiusDistance": 100},
+    {"uid": 6, "name":"", "contents": "-1", "rotation": 308.57142857142856, "radiusDistance": 100},
+    {"uid": 7, "name":"", "contents": "-1", "rotation": 25.71, "radiusDistance": 200},
+    {"uid": 8, "name":"", "contents": "-1", "rotation": 77.13857142857142, "radiusDistance": 200},
+    {"uid": 9, "name":"", "contents": "-1", "rotation": 128.56714285714287, "radiusDistance": 200},
+    {"uid": 10, "name":"", "contents": "-1", "rotation": 179.99571428571429, "radiusDistance": 200},
+    {"uid": 11, "name":"", "contents": "-1", "rotation": 231.42428571428573, "radiusDistance": 200},
+    {"uid": 12, "name":"", "contents": "-1", "rotation": 282.85285714285715, "radiusDistance": 200},
+    {"uid": 13, "name":"", "contents": "-1", "rotation": 334.28142857142853, "radiusDistance": 200}
+  ]
+}

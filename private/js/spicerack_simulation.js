@@ -2,41 +2,31 @@
 import { Display, SpiceRack } from './entity.js';
 import { Renderer } from './renderer.js';
 
-
 window.socket = io();
 window.inventory = [];
 
-
 // Socket HTTP requests communication
-
 function requestMoveToPoint(uid) {
   $.get('/movetopoint/' + uid,  // url
     function (data, textStatus, jqXHR) {  // success callback
-      console.log('status: ' + textStatus + ', data:' + data);
+      // console.log('status: ' + textStatus + ', data:' + data);
     });
 };
 
 function requestSetName(id, name) {
   $.post("setName", { name: name, id: id }, function (data) {
-
   }, "json");
 }
 
 function requestSetContents(id, contents) {
   $.post("setContents", { contents: contents, id: id }, function (data) {
-
   }, "json");
 }
-
-// Updating spice rack functions below this point
 
 function generateUserInterface() {
   var ui = $("#moveto_ui");
   ui.empty();
   window.inventory.forEach((item) => {
-    // var el = $(' <button id="'+ item.uid+'" class=" btn btn-secondary" >' + item.name + '</button>');
-    // ui.append(el);
-    // el.on("click",()=>{requestMoveToPoint(item.uid)});
     var row = $('<div class="row" style=" margin:20px 0px;"></div>')
 
     var button = $(' <button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-12">Select</button>');
@@ -72,19 +62,16 @@ function generateUserInterface() {
 
     ui.append(row);
 
-    //logic is below this point
+    // Element Events below this point
     button.on("click", () => { requestMoveToPoint(item.uid) });
 
     textBox.on('keypress', function (e) {
       if (e.which === 13) {
-        console.log("Change " + item.uid + " spice name => " + textBox.val());
         requestSetName(item.uid, textBox.val());
       }
     });
 
     select.on("change", () => { 
-      console.log("value changed :" + select.val()) 
-      
       if(select.val() != "null"){ 
         requestSetContents(item.uid, select.val());
       }
@@ -94,65 +81,38 @@ function generateUserInterface() {
 }
 
 function setupSocketCommunication(turnTable) {
-  window.socket.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
-  });
   window.socket.on('turnTable_rotation', (rotation) => {
-    console.log("Turn Table rotation: " + rotation);
     turnTable.degree = rotation;
   });
 
   window.socket.on('turnTable_inventory', (inventory) => {
-    console.log("Turn Table inventory message received");
     window.inventory = inventory;
     turnTable.replaceChildren(inventory);
     generateUserInterface();
   });
 }
 
-
-//global variables 
-window.spiceRack1;
-window.spiceRack2;
-window.model;
-
-function updateSpiceRack() {
-
-}
-
 function main() {
-
   let renderer = new Renderer("web_gl_simulation", 200, 200);
-  let spiceRack1 = new SpiceRack(200, 200, 100, 0, inventory);
-  window.spiceRack1 = spiceRack1; //make global so html can access
-  renderer.addEntity(window.spiceRack1);
+  let spiceRack1 = new SpiceRack(250, 250, 150, 0, inventory);
+  renderer.addEntity(spiceRack1);
 
   setupSocketCommunication(spiceRack1);
 
   wrapper(renderer);
-
 }
 
 function wrapper(renderer) {
-  let model = { lastTime: window.performance.now() };
-  renderer;
   animate();
   function animate() {
-    let time = window.performance.now();
-    let delta = Math.floor(1000 / (time - model.lastTime));
-    model.lastTime = time;
-    renderer.tick(delta);
-
+    renderer.tick();
     renderer.clearCanvas();
     renderer.drawEntities();
-
 
     window.requestAnimationFrame(animate);
   }
 }
+
 document.addEventListener("DOMContentLoaded", function () {
   main();
 });

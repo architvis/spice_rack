@@ -12,8 +12,8 @@ app.set('view engine', 'pug')
 
 app.use(express.static(__dirname + '/public'));
 
-var webgl_simulation = require('./webgl_simulation');
+var spicerack_simulation = require('./spicerack_simulation');
 
-app.use('/', webgl_simulation(io)); // passing io to webgl_simulation
+app.use('/', spicerack_simulation(io)); // passing io to spicerack_simulation
 
 server.listen(port);

@@ -23,7 +23,7 @@ export class Renderer {
           // no rendering
           break;
           case "spicerack":
-            this.drawSpiceRack(entity.x + entity.xrel, entity.y + entity.yrel);
+            this.drawSpiceRack(entity);
             entity.spices.forEach((spice)=>{this.drawEntity(spice)})
             break;
         case "display":
@@ -57,9 +57,9 @@ export class Renderer {
         // code block
       }
   }
-  tick(delta){
+  tick(){
     for (var i = 0; i < this.entities.length; i++) {
-      this.entities[i].tick(delta);
+      this.entities[i].tick();
     }
   }
   drawSpiceHolder(x, y) {
@@ -80,12 +80,15 @@ export class Renderer {
     this.ctx.restore();
   }
 
-  drawSpiceRack(x, y) {
+  drawSpiceRack(rack) {
+    var x = rack.x + rack.xrel;
+    var y = rack.y + rack.yrel;
+    
     this.ctx.beginPath();
-    this.ctx.arc(x, y, 20, 0, 2 * Math.PI);
+    this.ctx.arc(x, y, 20, 0, 2 * Math.PI); // middle dot
     this.ctx.fill();
     this.ctx.beginPath();
-    this.ctx.arc(x, y, 150, 0, 2 * Math.PI);
+    this.ctx.arc(x, y, rack.platformRadius, 0, 2 * Math.PI);  // outer edge of platform
     this.ctx.stroke();
 
     //draw the arrow that shows which spice is selected and where to pick up from

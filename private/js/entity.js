@@ -10,7 +10,6 @@ export class Entity {
   }
   tick(delta){
   }
-
 }
 
 export class Display extends Entity{
@@ -39,15 +38,14 @@ export class SpiceHolder extends Entity {
     this.radiusDistance = radiusDistance;
     this.contents = contents;
   }
-
 }
 
 export class SpiceRack extends Entity {
-  constructor(x, y, radiusDistance,degree=0, children=[]) { // children are entities that attach to SpiceRack
+  constructor(x, y, platformRadius,degree=0, children=[]) { // children are entities that attach to SpiceRack
     super(x, y, "spicerack");
 
     this.spices = [];
-    this.radiusDistance = radiusDistance;
+    this.platformRadius = platformRadius;
     this.position = [x, y];
     this.degree = degree;
     this.targetDegree = 0;
@@ -55,17 +53,7 @@ export class SpiceRack extends Entity {
     this.degStep = 1;  // how much does it rotate per step movement
     this.direction = 0;
 
-    var spice;
-    let sin = Math.sin;
-    let cos = Math.cos;
-    for (let i = 0; i < children.length; i++) {
-      let a = children[i].rotation; // angle
-      let x = (0 * cos(a)) + (sin(a) * (1));
-      let y = (0 * -(sin(a))) + (cos(a) * (1));
-      spice = new SpiceHolder(x, y,"none");
-     this.spices.push(spice);
-     console.log("spice added")
-    }
+    this.addChildren(children);
   }
 
   replaceChildren(children=[]){
@@ -84,7 +72,6 @@ export class SpiceRack extends Entity {
 
       spice = new SpiceHolder(x, y,children[i].state, children[i].name, children[i].radiusDistance, children[i].contents);
      this.spices.push(spice);
-     console.log("spice added")
     }
   }
 
@@ -105,13 +92,11 @@ export class SpiceRack extends Entity {
       i.xrel = i.xrel * i.radiusDistance;
       i.yrel = i.yrel * i.radiusDistance;
 
-
       //translate position
       i.xrel = i.xrel + this.position[0];
       i.yrel = i.yrel + this.position[1];
     })
   }
-
 
   runMoveTo(direction) { // [-1,0,1] = [counterclockwise, finddirection, clockwise]
     if (this.targetDegree == this.degree) {
@@ -128,9 +113,7 @@ export class SpiceRack extends Entity {
     this.spices = [];
   }
 
-
   tick() {  //runs logic
-    // no logic besides updating children, will be updated externally when message is directed to it
     this.updateChildren();
   }
 }
