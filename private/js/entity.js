@@ -32,11 +32,12 @@ export class Display extends Entity{
 }
 
 export class SpiceHolder extends Entity {
-  constructor(x, y, state = "none", displayString, radiusDistance = 100) {
+  constructor(x, y, state = "none", displayString, radiusDistance = 100, contents=0) {
     super(x, y, "spiceholder");
     this.state = state;
     this.displayString = displayString;
     this.radiusDistance = radiusDistance;
+    this.contents = contents;
   }
 
 }
@@ -80,30 +81,8 @@ export class SpiceRack extends Entity {
       let a = children[i].rotation*Math.PI/180; // angle
       let x = (sin(a) * (1));
       let y = (cos(a) * (1));
-      var contents = "";
 
-      switch(children[i].contents) {
-        case -1:
-          contents = "none";
-          break;
-        case 1:
-          contents = "quarter";
-          break;
-        case 2:
-          contents = "half";
-          break;
-        case 3:
-          contents = "3 quarters";
-          break;
-        case 4:
-          contents = "full";
-          break;
-        default:
-          contents = "none";
-          break;
-      }
-
-      spice = new SpiceHolder(x, y,contents, children[i].name, children[i].radiusDistance);
+      spice = new SpiceHolder(x, y,children[i].state, children[i].name, children[i].radiusDistance, children[i].contents);
      this.spices.push(spice);
      console.log("spice added")
     }

@@ -128,6 +128,7 @@ function main(io) {
   io.on('connection', (socket) => {
     console.log('a user connected');
     socket.emit('turnTable_inventory', inventory);
+    socket.emit('turnTable_rotation', table.rotation);
   });
 
   return router;

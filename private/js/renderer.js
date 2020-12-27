@@ -31,20 +31,20 @@ export class Renderer {
           break;
         case "spiceholder":
           var colors = [];
-          switch(entity.state) { // colors are based on https://clrs.cc/ defaults
-            case "none":
+          switch(entity.contents) { // colors are based on https://clrs.cc/ defaults
+            case "0":
               colors = ["#DDDDDD","black"];
               break;
-            case "quarter":
+            case "1":
               colors = ["#FFDC00","white"];
               break;
-            case "half":
+            case "2":
               colors = ["#7FDBFF","white"];
               break;
-            case "3 quarters":
+            case "3":
               colors = ["#0074D9","white"];
               break;
-            case "full":
+            case "4":
               colors = ["#001f3f","white"];
               break;
             default:
