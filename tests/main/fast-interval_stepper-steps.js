@@ -57,6 +57,11 @@ function setupSteppers() {
   }
 }
 
+function runStep() { //function to start blinking
+
+
+}
+
 function getstepsNs(stepsPerSecond){
   return ((1/(stepsPerSecond))*NS_PER_SEC);
 }

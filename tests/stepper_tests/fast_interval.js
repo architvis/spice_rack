@@ -1,16 +1,5 @@
 const NS_PER_SEC = 1e9;
 
-// console.log("Testing execution time.");
-
-// {
-//   let time = process.hrtime.bigint();
-//   let oldTime = time;
-//   time = process.hrtime.bigint();
-//   let diff = time-oldTime;
-//   console.log("Fastest instruction speed");
-//   console.log("ns: " + diff);
-//   console.log(""+((parseFloat(diff)/1000000)) + "ms")
-// }
  
 function immediate() {
   var iteration = 0;
