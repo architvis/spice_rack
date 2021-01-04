@@ -1,7 +1,7 @@
 
 var express = require('express')
 var router = express.Router()
-var spiceRack = require("./spicerack_configurations/config2");
+var spiceRack = require("./spicerack_configurations/config1");
 
 var inventory = spiceRack.inventory;
 
@@ -46,9 +46,6 @@ class TurnTable {
     }
     this.direction = (dist > 0) ? 1 : -1;
     this.steps = Math.abs(Math.round(dist / this.stepDegrees));
-
-    var i = 1000;
-    var j = .001;
   }
 
   step(){
@@ -61,9 +58,6 @@ class TurnTable {
     } else {
       this.idle = true;
       this.state = rState.ACTIVE;
-
-      var i = 1000;
-      var j = .001;
     }
   }
 

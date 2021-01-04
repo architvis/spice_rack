@@ -1,50 +1,57 @@
-console.log("\n.25:")
-checkIntervals(.25, 10, () => {
-  console.log("\n.5:")
-  checkIntervals(.5, 10, () => {
-    console.log("\n1:")
-    checkIntervals(1, 10, () => {
-      console.log("\n2:")
-      checkIntervals(2, 10, () => {
-        console.log("\n3:")
-        checkIntervals(3, 10, () => {
-          console.log("\n4:")
-          checkIntervals(4, 10, () => {
-            console.log("\n5:")
-            checkIntervals(5, 10, () => {
-              console.log("\n6:")
-              checkIntervals(6, 10, () => {
-                console.log("\n7:")
-                checkIntervals(7, 10, () => {
-                  console.log("\n8:")
-                  checkIntervals(8, 10, () => {
-                    console.log("\n9:")
-                    checkIntervals(9, 10, () => {
-                      console.log("\n10:")
-                      checkIntervals(10, 10, () => {
-                        console.log("\n11:")
-                        checkIntervals(11, 10, () => {
-                          console.log("\n12:")
-                          checkIntervals(12, 10, ()=>{
-                            console.log("\n13:")
-            checkIntervals(13, 10, ()=>{
-              console.log("\n14:")
-            checkIntervals(14, 10, ()=>{
-              console.log("\n15:")
-            checkIntervals(15, 10, ()=>{
-              
-            })
-            })
-            })
-                          })
-                        })
-                      })
-                    })
-                  })
-                })
-              })
-            })
-          })
+let intervals = 100;
+console.log("\n.01:")
+checkIntervals(.01, intervals, () => {
+  console.log("\n.1:")
+  checkIntervals(.1, intervals, () => {
+    console.log("\n.25:")
+    checkIntervals(.25, intervals, () => {
+      console.log("\n.5:")
+      checkIntervals(.5, intervals, () => {
+        console.log("\n1:")
+        checkIntervals(1, intervals, () => {
+          console.log("\n2:")
+        //   checkIntervals(2, intervals, () => {
+        //     console.log("\n3:")
+        //     checkIntervals(3, intervals, () => {
+        //       console.log("\n4:")
+        //       checkIntervals(4, intervals, () => {
+        //         console.log("\n5:")
+        //         checkIntervals(5, intervals, () => {
+        //           console.log("\n6:")
+        //           checkIntervals(6, intervals, () => {
+        //             console.log("\n7:")
+        //             checkIntervals(7, intervals, () => {
+        //               console.log("\n8:")
+        //               checkIntervals(8, intervals, () => {
+        //                 console.log("\n9:")
+        //                 checkIntervals(9, intervals, () => {
+        //                   console.log("\n10:")
+        //                   checkIntervals(10, intervals, () => {
+        //                     console.log("\n11:")
+        //                     checkIntervals(11, intervals, () => {
+        //                       console.log("\n12:")
+        //                       checkIntervals(12, intervals, () => {
+        //                         console.log("\n13:")
+        //                         checkIntervals(13, intervals, () => {
+        //                           console.log("\n14:")
+        //                           checkIntervals(14, intervals, () => {
+        //                             console.log("\n15:")
+        //                             checkIntervals(15, intervals, () => {
+
+        //                             })
+        //                           })
+        //                         })
+        //                       })
+        //                     })
+        //                   })
+        //                 })
+        //               })
+        //             })
+        //           })
+        //         })
+        //       })
+        //     })
+        //   })
         })
       })
     })
@@ -53,7 +60,7 @@ checkIntervals(.25, 10, () => {
 
 function checkIntervals(intervalMs, intervals, callback) {
   var iteration = 0;
-  console.log("time expected: "+(intervalMs*intervals) + "ms")
+  console.log("time expected: " + (intervalMs * intervals) + "ms")
   console.time("interval_setTimeOut");
   function test() {
     setTimeout(() => {
@@ -79,9 +86,33 @@ function checkIntervals(intervalMs, intervals, callback) {
       } else {
         console.timeEnd("interval_setInterval");
         clearInterval(id);
-        loop();
+        immediate();
       }
     }
+  }
+
+  function immediate() {
+    console.time("interval_immediate");
+    var iteration = 0;
+    // var times = []
+    var time = process.hrtime()[1];
+    function innerLoop() {
+      let oldTime = time;
+      time = process.hrtime()[1];
+      // times.push(time-oldTime);
+      setImmediate(() => {
+        if ((iteration) < intervals) {
+          // console.log(time-oldTime);
+          if(time-oldTime>)iteration++;
+          innerLoop();
+        } else {
+          console.timeEnd("interval_immediate");
+          // console.log(process.hrtime()[1]-time)
+          loop();
+        }
+      });
+    }
+    innerLoop();
   }
 
   function loop() {
