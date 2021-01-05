@@ -9,7 +9,7 @@
   "rotation": 0,
   "stepDegrees": 0.45, 
   "stepsPerMs": 200,
-  "stepsPerSecond": 1000,
+  "stepsPerSecond": 100,
   "steps": 0,
   "direction": 0,
   "inventory": [
