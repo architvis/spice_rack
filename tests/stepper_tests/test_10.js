@@ -17,9 +17,6 @@ let ms3;       // GPIO18 as an output
 let stepToggle = 0;
 let steps = 0;
 let maxSteps = 200 * 16;
-
-let intervals = 0; // for tracking 
-
 direction.writeSync(1);
 setupSteppers();
 
@@ -66,14 +63,13 @@ function getstepsNs(stepsPerSecond){
 
 function immediate(steps, stepsPerSecond) {
   var iteration = 0;
-  let startTime = process.hrtime.bigint();
-  let time = startTime;
   let intervalNs = getstepsNs(stepsPerSecond);  
   let startNsSpeed = intervalNs; //startSpeed
   let nsSpeed = startNsSpeed;
+  let startTime = process.hrtime.bigint();
+  let time = startTime;
   function innerLoop() {
     setImmediate(() => {
-      intervals++;
       if (iteration < (steps)) {
 
         if(stepToggle == 1){ // put to low, fastest way
@@ -88,8 +84,7 @@ function immediate(steps, stepsPerSecond) {
 
         if (diff > nsSpeed) { // min time
           iteration++;
-          stepToggle = ((stepToggle == 0) ? 1 : 0);
-          step.writeSync(stepToggle);
+
           time = newTime;
         }
         innerLoop();
@@ -98,7 +93,6 @@ function immediate(steps, stepsPerSecond) {
         time = process.hrtime.bigint();
         let diff = time - oldTime;
         console.log("Time to complete movement: " + (parseInt(diff)*SEC_PER_NS)+ "s");
-        console.log("intervals: "+intervals);
       }
     });
   }

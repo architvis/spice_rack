@@ -111,6 +111,7 @@ class TurnTable {
     
     stepToggle = ((stepToggle == 0) ? 1 : 0);
     step.writeSync(stepToggle);
+    console.log("stepper steped");
   
     if (this.steps > 0) {
       this.socket.emit('turnTable_rotation', this.rotation);
@@ -124,6 +125,7 @@ class TurnTable {
 }
 
 function main(io) {
+  console.log("test")
   setupSteppers();
   var table = new TurnTable(spiceRack.rotation, spiceRack.stepDegrees, spiceRack.stepsPerSecond, spiceRack.idle, spiceRack.state, true, io); //rotation = 0, stepDegrees, stepsPerSecond, idle = true, state = "", fullRotation = true
   table.step();
