@@ -29,7 +29,7 @@ function generateUserInterface() {
   window.inventory.forEach((item) => {
     var row = $('<div class="row" style=" margin:20px 0px;"></div>')
 
-    var button = $(' <button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-12">Select</button>');
+    var button = $(' <button class="btn-primary btn btn-block col-lg-3 col-xl-3 col-12">Select</button>');
     row.append(button);
 
     var textBoxContainer = $(' <div class="col-lg-2 col-xl-2 col-6" style="margin:auto;"></div>')
@@ -54,7 +54,7 @@ function generateUserInterface() {
     row.append(selectContainer);
 
     var contents = parseInt(item.contents);
-    var progressBarContainer = $('<div class="col-lg-4 col-xl-4 col-6" style="margin:10px 0px; height:30px;"></div>');
+    var progressBarContainer = $('<div class="col-lg-3 col-xl-3 col-6" style="margin:10px 0px; height:30px;"></div>');
     var progress = (contents != -1 ? contents * 25 : 0)
     var progressBar = $(' <div class="progress " style="height:100%; padding:0px;"> <div class="progress-bar progress-bar-striped" style="width: ' + progress + '%; " ></div></div>');
     progressBarContainer.append(progressBar);
@@ -79,9 +79,11 @@ function generateUserInterface() {
 
   });
   let calibration = $('<div class="row" style=" margin:20px 0px;"></div>');
-  let leftButton = $('<button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-12"><</button>');
+  let filler = $('<div class="col-lg-3 col-0"></div>')
+  calibration.append(filler);
+  let leftButton = $('<button class="btn-primary btn btn-block col-lg-2 col-4"><</button>');
   calibration.append(leftButton);
-  var selectContainer = $('<div class="col-lg-2 col-xl-2 col-6"></div>');
+  var selectContainer = $('<div class="col-lg-2 col-4"></div>');
   var select = $(`<select class="custom-select mr-sm-2" >
   <option selected value="null">Choose...</option>
   <option value="1">1 step</option>
@@ -93,7 +95,25 @@ function generateUserInterface() {
   selectContainer.append(select);
   calibration.append(selectContainer);
 
+  let rightButton = $('<button class="btn-primary btn btn-block col-lg-2 col-4">></button>');
+  calibration.append(rightButton);
+
   ui.append(calibration);
+
+  leftButton.on('click', function () {
+      console.log("left button click")
+      $.get('/move/' + (-select.val()),  // url
+    function (data, textStatus, jqXHR) {  // success callback
+      // console.log('status: ' + textStatus + ', data:' + data);
+    });
+  });
+
+   rightButton.on('click', function () {
+      $.get('/move/' + (select.val()),  // url
+    function (data, textStatus, jqXHR) {  // success callback
+      // console.log('status: ' + textStatus + ', data:' + data);
+    });
+  });
 }
 
 function setupSocketCommunication(turnTable) {

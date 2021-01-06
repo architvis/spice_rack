@@ -211,7 +211,6 @@ function main(io) {
 
   router.get('/move/:steps', function (req, res) {
     let steps = parseInt(req.params.steps);
-    console.log("Steps requested: " + steps);
     moveTurntable(table, steps);
     res.send(200);
   })
