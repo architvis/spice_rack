@@ -78,6 +78,22 @@ function generateUserInterface() {
     });
 
   });
+  let calibration = $('<div class="row" style=" margin:20px 0px;"></div>');
+  let leftButton = $('<button class="btn-primary btn btn-block col-lg-2 col-xl-2 col-12"><</button>');
+  calibration.append(leftButton);
+  var selectContainer = $('<div class="col-lg-2 col-xl-2 col-6"></div>');
+  var select = $(`<select class="custom-select mr-sm-2" >
+  <option selected value="null">Choose...</option>
+  <option value="1">1 step</option>
+  <option value="5">5 step</option>
+  <option value="10">10 step</option>
+  <option value="100">100 step</option>
+  <option value="1000">1000 step</option>`);
+  select.val(10);
+  selectContainer.append(select);
+  calibration.append(selectContainer);
+
+  ui.append(calibration);
 }
 
 function setupSocketCommunication(turnTable) {
